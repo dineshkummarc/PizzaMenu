@@ -1,0 +1,36 @@
+# Maintainer: Adam Hani Schakaki <adam@schakaki.net>
+pkgname=pizzapanel-git
+pkgver=20120430
+pkgrel=1
+pkgdesc="A web server control panel based on CakePHP following the one application for one task approach."
+arch=('any')
+url="https://github.com/PizzaPanel"
+license=('GPL')
+depends=('php' 'mysql')
+makedepends=('git')
+provides=("pizzapanel=${pkgver}")
+conflicts=('pizzapanel')
+
+_gitroot=git://github.com/PizzaPanel/PizzaPanel.git
+_gitname=PizzaPanel
+
+package() {
+  cd "$srcdir"
+  msg "Connecting to GIT server...."
+
+  if [[ -d "$_gitname" ]]; then
+    cd "$_gitname" && git pull origin
+    msg "The local files are updated."
+  else
+    git clone "$_gitroot" "$_gitname"
+  fi
+
+  msg "GIT checkout done or server timeout"
+
+  cd "$srcdir"
+
+  mkdir -p $pkgdir/srv/http
+  cp -r $_gitname $pkgdir/srv/http/pizzapanel
+}
+
+# vim:set ts=2 sw=2 et:
